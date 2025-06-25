@@ -1,0 +1,25 @@
+# Bar chart for marketing mix
+import numpy as np
+import matplotlib.pyplot as plt
+
+clusters = ['Cluster 0\n(High-Income Urban)', 'Cluster 1\n(Mid-Income Semi-Urban)', 'Cluster 2\n(Low-Income Rural)']
+product = [4, 3, 2]
+price = [5, 3, 1]
+place = [4, 3, 2]
+promotion = [5, 3, 2]
+
+x = np.arange(len(clusters))
+width = 0.2
+plt.figure(figsize=(10, 6))
+plt.bar(x - 1.5*width, product, width, label='Product')
+plt.bar(x - 0.5*width, price, width, label='Price')
+plt.bar(x + 0.5*width, place, width, label='Place')
+plt.bar(x + 1.5*width, promotion, width, label='Promotion')
+plt.ylabel('Marketing Intensity (1 = Basic, 5 = High-End)')
+plt.title('Customizing the Marketing Mix by Segment')
+plt.xticks(x, clusters)
+plt.ylim(0, 6)
+plt.legend()
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+plt.tight_layout()
+plt.show()
