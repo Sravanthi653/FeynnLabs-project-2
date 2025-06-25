@@ -1,0 +1,54 @@
+# 1. Import libraries
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# 2. Load the dataset
+df = pd.read_csv("household_appliances_sample.csv")
+
+# 3. Encode categorical columns
+le = LabelEncoder()
+df['House_Type'] = le.fit_transform(df['House_Type'])      # Owned = 1, Rented = 0
+df['Urban_Rural'] = le.fit_transform(df['Urban_Rural'])    # Urban = 1, Rural = 0
+
+# 4. Drop ID column
+df_features = df.drop(columns=['ID'])
+
+# 5. Normalize the data
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(df_features)
+
+# 6. Use Elbow Method to choose number of clusters (K)
+wcss = []
+for i in range(1, 11):
+    kmeans = KMeans(n_clusters=i, random_state=42)
+    kmeans.fit(X_scaled)
+    wcss.append(kmeans.inertia_)
+
+# Plot the Elbow Curve
+plt.figure(figsize=(8,5))
+plt.plot(range(1, 11), wcss, marker='o')
+plt.title("Elbow Method - Optimal Number of Clusters")
+plt.xlabel("Number of Clusters (K)")
+plt.ylabel("WCSS (Within Cluster Sum of Squares)")
+plt.grid(True)
+plt.show()
+
+# 7. Choose K (e.g., 3) based on Elbow Curve and apply K-Means
+optimal_k = 3
+kmeans = KMeans(n_clusters=optimal_k, random_state=42)
+df['Cluster'] = kmeans.fit_predict(X_scaled)
+
+# 8. View cluster labels
+print(df[['Income (₹/month)', 'Electricity_Usage (kWh)', 'Cluster']])
+
+# 9. Visualize segments
+plt.figure(figsize=(8,6))
+sns.scatterplot(data=df, x='Income (₹/month)', y='Electricity_Usage (kWh)', hue='Cluster', palette='Set2', s=100)
+plt.title('Household Segments Based on Income and Electricity Usage')
+plt.grid(True)
+plt.tight_layout()
+plt.show()
